@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, RefreshCw } from 'lucide-react';
+import { ChevronDown, RefreshCw, AlertCircle } from 'lucide-react';
 
 const TrendingStocksScreener = () => {
   const [selectedCriteria, setSelectedCriteria] = useState('Volume Buzzers');
@@ -15,763 +15,37 @@ const TrendingStocksScreener = () => {
     '100% up in a Year'
   ];
 
-  // API payloads for different screener types
-  const getPayloadForCriteria = (criteria) => {
-    const payloads = {
-      'Volume Buzzers': {
-        "columns": [
-          "name",
-          "description",
-          "close",
-          "change",
-          "volume",
-          "relative_volume",
-          "SMA20",
-          "market_cap_basic",
-          "sector"
-        ],
-        "filter": [
-          {
-            "left": "close",
-            "operation": "egreater",
-            "right": 30
-          },
-          {
-            "left": "country",
-            "operation": "in_range",
-            "right": ["India"]
-          },
-          {
-            "left": "exchange",
-            "operation": "in_range",
-            "right": ["NSE"]
-          },
-          {
-            "left": "average_volume_60d_calc",
-            "operation": "greater",
-            "right": 100000
-          },
-          {
-            "left": "change",
-            "operation": "greater",
-            "right": 3
-          },
-          {
-            "left": "relative_volume_10d_calc",
-            "operation": "greater",
-            "right": 3
-          },
-          {
-            "left": "market_cap_basic",
-            "operation": "egreater",
-            "right": 8000000000
-          }
-        ],
-        "ignore_unknown_fields": false,
-        "options": {
-          "lang": "en"
-        },
-        "range": [0, 100],
-        "sort": {
-          "sortBy": "market_cap_basic",
-          "sortOrder": "desc"
-        },
-        "symbols": {},
-        "markets": ["india"],
-        "filter2": {
-          "operator": "and",
-          "operands": [
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["preferred"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "dr"
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "fund"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has_none_of",
-                            "right": ["etf"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      '52 week High': {
-        "columns": [
-          "name",
-          "description",
-          "close",
-          "change",
-          "volume",
-          "relative_volume",
-          "SMA20",
-          "market_cap_basic",
-          "sector"
-        ],
-        "filter": [
-          {
-            "left": "country",
-            "operation": "in_range",
-            "right": ["India"]
-          },
-          {
-            "left": "close",
-            "operation": "egreater",
-            "right": 30
-          },
-          {
-            "left": "exchange",
-            "operation": "in_range",
-            "right": ["NSE"]
-          },
-          {
-            "left": "average_volume_60d_calc",
-            "operation": "greater",
-            "right": 100000
-          },
-          {
-            "left": "price_52_week_high",
-            "operation": "eless",
-            "right": "high"
-          },
-          {
-            "left": "market_cap_basic",
-            "operation": "egreater",
-            "right": 8000000000
-          },
-          {
-            "left": "is_primary",
-            "operation": "equal",
-            "right": true
-          }
-        ],
-        "ignore_unknown_fields": false,
-        "options": {
-          "lang": "en"
-        },
-        "range": [0, 100],
-        "sort": {
-          "sortBy": "market_cap_basic",
-          "sortOrder": "desc"
-        },
-        "symbols": {},
-        "markets": ["india"],
-        "filter2": {
-          "operator": "and",
-          "operands": [
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["preferred"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "dr"
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "fund"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has_none_of",
-                            "right": ["etf"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      '1 Month High': {
-        "columns": [
-          "name",
-          "description",
-          "close",
-          "change",
-          "volume",
-          "relative_volume",
-          "SMA20",
-          "market_cap_basic",
-          "sector"
-        ],
-        "filter": [
-          {
-            "left": "country",
-            "operation": "in_range",
-            "right": ["India"]
-          },
-          {
-            "left": "exchange",
-            "operation": "in_range",
-            "right": ["NSE"]
-          },
-          {
-            "left": "close",
-            "operation": "egreater",
-            "right": 30
-          },
-          {
-            "left": "average_volume_60d_calc",
-            "operation": "greater",
-            "right": 100000
-          },
-          {
-            "left": "High.1M",
-            "operation": "eless",
-            "right": "high"
-          },
-          {
-            "left": "market_cap_basic",
-            "operation": "egreater",
-            "right": 8000000000
-          }
-        ],
-        "ignore_unknown_fields": false,
-        "options": {
-          "lang": "en"
-        },
-        "range": [0, 100],
-        "sort": {
-          "sortBy": "market_cap_basic",
-          "sortOrder": "desc"
-        },
-        "symbols": {},
-        "markets": ["india"],
-        "filter2": {
-          "operator": "and",
-          "operands": [
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["preferred"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "dr"
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "fund"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has_none_of",
-                            "right": ["etf"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      },
-      '100% up in a Year': {
-        "columns": [
-          "name",
-          "description",
-          "close",
-          "change",
-          "volume",
-          "relative_volume",
-          "SMA20",
-          "market_cap_basic",
-          "sector"
-        ],
-        "filter": [
-          {
-            "left": "country",
-            "operation": "in_range",
-            "right": ["India"]
-          },
-          {
-            "left": "exchange",
-            "operation": "in_range",
-            "right": ["NSE"]
-          },
-          {
-            "left": "close",
-            "operation": "egreater",
-            "right": 30
-          },
-          {
-            "left": "average_volume_60d_calc",
-            "operation": "greater",
-            "right": 100000
-          },
-          {
-            "left": "market_cap_basic",
-            "operation": "egreater",
-            "right": 8000000000
-          },
-          {
-            "left": "Perf.Y",
-            "operation": "greater",
-            "right": 100
-          }
-        ],
-        "ignore_unknown_fields": false,
-        "options": {
-          "lang": "en"
-        },
-        "range": [0, 100],
-        "sort": {
-          "sortBy": "market_cap_basic",
-          "sortOrder": "desc"
-        },
-        "symbols": {},
-        "markets": ["india"],
-        "filter2": {
-          "operator": "and",
-          "operands": [
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            {
-              "operation": {
-                "operator": "or",
-                "operands": [
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["common"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "stock"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has",
-                            "right": ["preferred"]
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "dr"
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "operation": {
-                      "operator": "and",
-                      "operands": [
-                        {
-                          "expression": {
-                            "left": "type",
-                            "operation": "equal",
-                            "right": "fund"
-                          }
-                        },
-                        {
-                          "expression": {
-                            "left": "typespecs",
-                            "operation": "has_none_of",
-                            "right": ["etf"]
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      }
-    };
-    return payloads[criteria] || payloads['Volume Buzzers'];
-  };
-
   const fetchStocks = async (criteria) => {
     setLoading(true);
     setError(null);
     
     try {
-      const payload = getPayloadForCriteria(criteria);
-      
-      const response = await fetch('https://scanner.tradingview.com/india/scan?label-product=popup-screener-stock', {
+      const response = await fetch('/api/stocks/screener', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ criteria }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(result.message || `HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      
-      // Process the TradingView API response
-      if (data && data.data) {
-        const processedStocks = data.data.map((stock, index) => {
-          const stockData = stock.d || [];
-          return {
-            symbol: stockData[0] || 'N/A', // name
-            description: stockData[1] || '', // description
-            price: stockData[2] || 0, // close
-            change: stockData[3] || 0, // change
-            volume: stockData[4] || 0, // volume
-            rvol: stockData[5] ? parseFloat(stockData[5]).toFixed(2) : '-', // relative_volume
-            sma20: stockData[6] ? parseFloat(stockData[6]).toFixed(2) : '-', // SMA20
-            marketCap: stockData[7] || 0, // market_cap_basic
-            sector: stockData[8] || 'Finance', // sector
-            smaDistance: stockData[6] && stockData[2] ? 
-              ((stockData[2] - stockData[6]) / stockData[6] * 100) : 0 // Calculate SMA distance
-          };
-        });
-        setStocks(processedStocks);
+      if (result.success) {
+        setStocks(result.data || []);
+        setLastUpdated(new Date());
+        setError(null);
       } else {
-        setStocks([]);
+        throw new Error(result.message || 'Failed to fetch stock data');
       }
-      setLastUpdated(new Date());
       
     } catch (err) {
       setError(err.message);
       console.error('Error fetching stocks:', err);
+      setStocks([]);
     } finally {
       setLoading(false);
     }
@@ -782,7 +56,9 @@ const TrendingStocksScreener = () => {
   }, [selectedCriteria]);
 
   const handleCriteriaChange = (criteria) => {
-    setSelectedCriteria(criteria);
+    if (criteria !== selectedCriteria) {
+      setSelectedCriteria(criteria);
+    }
   };
 
   const handleRefresh = () => {
@@ -790,20 +66,35 @@ const TrendingStocksScreener = () => {
   };
 
   const formatValue = (value, type) => {
-    if (value === null || value === undefined) return '-';
+    if (value === null || value === undefined || value === 'N/A') return '-';
     
     switch (type) {
       case 'price':
-        return `₹${value.toFixed(1)}`;
+        return typeof value === 'number' ? `₹${value.toFixed(2)}` : '-';
       case 'change':
-        return `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
+        return typeof value === 'number' ? `${value > 0 ? '+' : ''}${value.toFixed(2)}%` : '-';
       case 'volume':
-        return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : `${(value / 1000).toFixed(1)}K`;
+        if (typeof value !== 'number') return '-';
+        return value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : 
+               value >= 1000 ? `${(value / 1000).toFixed(1)}K` : value.toString();
       case 'marketCap':
-        return value >= 1000 ? `₹${(value / 1000).toFixed(2)}T` : `₹${value.toFixed(2)}B`;
+        if (typeof value !== 'number') return '-';
+        return value >= 1000000000000 ? `₹${(value / 1000000000000).toFixed(2)}T` : 
+               value >= 1000000000 ? `₹${(value / 1000000000).toFixed(2)}B` : 
+               value >= 1000000 ? `₹${(value / 1000000).toFixed(2)}M` : `₹${value.toFixed(2)}`;
+      case 'decimal':
+        return typeof value === 'number' ? value.toFixed(2) : value;
       default:
         return value;
     }
+  };
+
+  const formatSMADistance = (stock) => {
+    if (!stock.smaDistance || typeof stock.smaDistance !== 'number') {
+      return '-';
+    }
+    const distance = stock.smaDistance;
+    return `${distance > 0 ? '+' : ''}${distance.toFixed(2)}%`;
   };
 
   return (
@@ -823,19 +114,20 @@ const TrendingStocksScreener = () => {
 
         {/* Stock Screener Section */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
             <div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Stock Screener</h2>
               <p className="text-gray-600">Select a screening criteria to filter stocks</p>
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">Screening Criteria</div>
+              <div className="text-sm text-gray-600 hidden sm:block">Screening Criteria</div>
               <div className="relative">
                 <select 
                   value={selectedCriteria}
                   onChange={(e) => handleCriteriaChange(e.target.value)}
-                  className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-48"
+                  disabled={loading}
+                  className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-48 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {dropdownOptions.map((option) => (
                     <option key={option} value={option}>
@@ -849,7 +141,8 @@ const TrendingStocksScreener = () => {
               <button
                 onClick={handleRefresh}
                 disabled={loading}
-                className="p-2 text-gray-600 hover:text-gray-900 disabled:opacity-50"
+                className="p-2 text-gray-600 hover:text-gray-900 disabled:opacity-50 transition-colors disabled:cursor-not-allowed"
+                title="Refresh data"
               >
                 <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
               </button>
@@ -860,14 +153,30 @@ const TrendingStocksScreener = () => {
           <div>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium text-gray-900">{selectedCriteria}</h3>
-              <div className="text-sm text-gray-500">
-                {stocks.length} stocks found
-              </div>
+              {!loading && !error && (
+                <div className="text-sm text-gray-500">
+                  {stocks.length} stock{stocks.length !== 1 ? 's' : ''} found
+                </div>
+              )}
             </div>
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                <p className="text-red-700">Error: {error}</p>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <AlertCircle className="h-5 w-5 text-red-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-red-700 font-medium">Error loading stock data</p>
+                    <p className="text-red-600 text-sm mt-1">{error}</p>
+                    <button
+                      onClick={handleRefresh}
+                      className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -895,30 +204,51 @@ const TrendingStocksScreener = () => {
                   <tbody>
                     {stocks.length > 0 ? (
                       stocks.map((stock, index) => (
-                        <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                        <tr key={`${stock.symbol}-${index}`} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4">
-                            <span className="text-blue-600 font-medium">{stock.symbol || 'N/A'}</span>
+                            <div>
+                              <span className="text-blue-600 font-medium">
+                                {stock.symbol || 'N/A'}
+                              </span>
+                              {stock.description && (
+                                <div className="text-xs text-gray-500 mt-1 truncate max-w-32">
+                                  {stock.description}
+                                </div>
+                              )}
+                            </div>
                           </td>
-                          <td className="py-3 px-4">{formatValue(stock.price, 'price')}</td>
+                          <td className="py-3 px-4 font-medium">{formatValue(stock.price, 'price')}</td>
                           <td className="py-3 px-4">
-                            <span className={`${stock.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            <span className={`font-medium ${
+                              typeof stock.change === 'number' 
+                                ? stock.change >= 0 ? 'text-green-600' : 'text-red-600'
+                                : 'text-gray-500'
+                            }`}>
                               {formatValue(stock.change, 'change')}
                             </span>
                           </td>
                           <td className="py-3 px-4">{formatValue(stock.volume, 'volume')}</td>
-                          <td className="py-3 px-4">{stock.rvol || '-'}</td>
-                          <td className="py-3 px-4">{stock.sma20 || '-'}</td>
+                          <td className="py-3 px-4">{formatValue(stock.rvol, 'decimal')}</td>
+                          <td className="py-3 px-4">{formatValue(stock.sma20, 'decimal')}</td>
                           <td className="py-3 px-4">
-                            <span className={`${stock.smaDistance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {stock.smaDistance ? `${stock.smaDistance > 0 ? '+' : ''}${stock.smaDistance.toFixed(2)}%` : '-'}
+                            <span className={`${
+                              typeof stock.smaDistance === 'number'
+                                ? stock.smaDistance >= 0 ? 'text-green-600' : 'text-red-600'
+                                : 'text-gray-500'
+                            }`}>
+                              {formatSMADistance(stock)}
                             </span>
                           </td>
                           <td className="py-3 px-4">{formatValue(stock.marketCap, 'marketCap')}</td>
-                          <td className="py-3 px-4">{stock.sector || 'Finance'}</td>
+                          <td className="py-3 px-4">
+                            <span className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">
+                              {stock.sector || 'Finance'}
+                            </span>
+                          </td>
                         </tr>
                       ))
                     ) : (
-                      !loading && (
+                      !loading && !error && (
                         <tr>
                           <td colSpan="9" className="py-8 text-center text-gray-500">
                             No stocks found for the selected criteria
