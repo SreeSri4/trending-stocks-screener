@@ -1,13 +1,256 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f9fafb;
+    color: #111827;
+  }
+  
+  #root {
+    min-height: 100vh;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Custom component styles */
+@layer components {
+  /* Table styling improvements */
+  .stock-table {
+    @apply w-full border-collapse;
+  }
+  
+  .stock-table th {
+    @apply bg-gray-50 text-xs font-semibold text-gray-600 uppercase tracking-wider;
+  }
+  
+  .stock-table td {
+    @apply text-sm text-gray-900 whitespace-nowrap;
+  }
+  
+  .stock-table tr:hover {
+    @apply bg-gray-50 transition-colors duration-150;
+  }
+  
+  /* Custom scrollbar for tables */
+  .table-container {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db #f3f4f6;
+  }
+  
+  .table-container::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  }
+  
+  /* Custom dropdown styling */
+  .custom-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+  
+  /* Loading animation improvements */
+  .loading-spinner {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Card hover effects */
+  .stock-card {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .stock-card:hover {
+    @apply shadow-lg transform translate-y-[-1px];
+  }
+  
+  /* Custom button styles */
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-refresh {
+    @apply p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200;
+  }
+}
+
+/* Custom utility classes */
+@layer utilities {
+  /* Text color utilities for financial data */
+  .text-profit {
+    @apply text-green-600;
+  }
+  
+  .text-loss {
+    @apply text-red-600;
+  }
+  
+  .text-neutral {
+    @apply text-gray-600;
+  }
+  
+  /* Background color utilities for financial data */
+  .bg-profit-light {
+    @apply bg-green-50;
+  }
+  
+  .bg-loss-light {
+    @apply bg-red-50;
+  }
+  
+  /* Border utilities for financial data */
+  .border-profit {
+    @apply border-green-200;
+  }
+  
+  .border-loss {
+    @apply border-red-200;
+  }
+  
+  /* Custom spacing utilities */
+  .space-y-0\.5 > * + * {
+    margin-top: 0.125rem;
+  }
+  
+  /* Typography utilities */
+  .text-financial {
+    font-variant-numeric: tabular-nums;
+    @apply font-mono text-sm;
+  }
+  
+  /* Animation utilities */
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Responsive utilities */
+  .container-custom {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+    max-width: 1280px;
+  }
+  
+  /* Focus utilities for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+  
+  /* Shadow utilities */
+  .shadow-card {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+  
+  .shadow-card-hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    @apply bg-white text-black;
+  }
+  
+  .stock-table {
+    @apply border border-gray-300;
+  }
+  
+  .stock-table th,
+  .stock-table td {
+    @apply border border-gray-300 p-2;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  /* Uncomment if you want to add dark mode support
+  :root {
+    --bg-primary: #1f2937;
+    --bg-secondary: #374151;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+  }
+  */
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-profit {
+    @apply text-green-800;
+  }
+  
+  .text-loss {
+    @apply text-red-800;
+  }
+  
+  .stock-table th {
+    @apply bg-gray-200;
+  }
 }
