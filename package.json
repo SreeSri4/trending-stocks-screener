@@ -5,6 +5,7 @@
   "description": "A React-based web application that provides a screener for trending stocks, utilizing Tailwind CSS for styling and Lucide icons for UI components.",
   "private": true,
   "dependencies": {
+    "@tailwindcss/forms": "^0.5.10",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -41,10 +42,11 @@
     ]
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.8",
     "autoprefixer": "^10.4.21",
     "gh-pages": "^6.3.0",
     "postcss": "^8.5.4",
     "react-scripts": "^5.0.1",
-    "tailwindcss": "^4.1.8"
+    "tailwindcss": "^3.4.0"
   }
 }
