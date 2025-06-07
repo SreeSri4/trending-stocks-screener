@@ -20,13 +20,22 @@ const TrendingStocksScreener = () => {
     setError(null);
     
     try {
-      const response = await fetch('/api/stocks/screener', {
+      const apiUrl = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:3000/api/stocks/screener'
+        : '/api/stocks/screener';
+        
+      console.log('Fetching from:', apiUrl); // Debug log
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ criteria }),
       });
+      
+      console.log('Response status:', response.status); // Debug log
+      console.log('Response headers:', response.headers.get('content-type')); // Debug log
 
       const result = await response.json();
 
